@@ -40,6 +40,13 @@ def test_get_list_lte():
     ]
 
 
+def test_get_list_404():
+    response = client.get(prefix + "/kt", params={"price": 10, "tp": "none"})
+
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Not Found"}
+
+
 def test_select_carrier_single():
     response = client.get(prefix + "/kt/combination", params={"q": "choice_special"})
 
