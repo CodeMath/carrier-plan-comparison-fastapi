@@ -1,4 +1,4 @@
-from fastapi import Depends, APIRouter, Header, Query
+from fastapi import Depends, APIRouter, Header, Query, HTTPException
 from typing_extensions import Annotated
 from pydantic import Required
 
@@ -30,12 +30,14 @@ async def get_items(commons: CarrierPlanQueryParams = Depends(CarrierPlanQueryPa
             if plan["price"] >= commons.price:
                 if commons.tp == "all":
                     ge_plan.append(plan)
-                elif commons.tp == "5g" and plan["carrier"] == "5G":
+                elif commons.tp.upper() == "5G" and plan["carrier"] == "5G":
                     ge_plan.append(plan)
-                elif commons.tp == "LTE" and plan["carrier"] == "LTE":
+                elif commons.tp.upper() == "LTE" and plan["carrier"] == "LTE":
                     ge_plan.append(plan)
-
-        return ge_plan
+        if ge_plan:
+            return ge_plan
+        else:
+            raise HTTPException(status_code=404)
 
     return fake_plan
 
