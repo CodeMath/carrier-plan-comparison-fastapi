@@ -61,7 +61,7 @@ async def select_carrier(
         single_combination = CombinedDiscount(
             base_line=base_line_model,
             internet=base_internet,
-            sum_payment=sum_of_payment(base_line=base_line, ith=base_internet),
+            sum_payment=sum_of_payment(base_line=base_line_model, ith=base_internet),
         )
         return single_combination
     else:
