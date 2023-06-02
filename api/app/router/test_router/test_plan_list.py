@@ -38,14 +38,14 @@ def test_get_list_mobile_lte():
 
 
 def test_get_list_mobile_404():
-    response = client.get(prefix + "/kt", params={"price": 10, "tp": "none"})
+    response = client.get(prefix + "/mobile", params={"price": 10, "tp": "none"})
 
     assert response.status_code == 404
     assert response.json() == {"detail": "Not Found"}
 
 
 def test_get_list_internet():
-    response = client.get(prefix + "/mobile", params={"price": 60000, "wifi": 2})
+    response = client.get(prefix + "/internet", params={"price": 60000, "wifi": 2})
 
     assert response.status_code == 200
     assert response.json() == [
