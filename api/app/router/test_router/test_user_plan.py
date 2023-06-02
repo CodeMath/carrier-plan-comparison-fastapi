@@ -19,7 +19,7 @@ def test_select_carrier_single():
             "combination_rule": {
                 "name": "싱글 결합",
                 "carrier_line": 1,
-                "is_flat_discount": false,
+                "is_flat_discount": False,
                 "combination_discount": 0.25,
             },
         },
