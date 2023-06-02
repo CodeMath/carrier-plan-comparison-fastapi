@@ -1,16 +1,9 @@
 from fastapi import APIRouter, Query, HTTPException
 from typing_extensions import Annotated
 from typing import Union
-from ..internal.calculater import (
-    is_base_line,
-    sum_of_payment,
-)
+from ..internal.calculater import is_base_line, sum_of_payment
 
-from ..internal.planKT import (
-    InternatCombination,
-    CombinedDiscount,
-    LineDiscount,
-)
+from ..internal.modle_kt import InternatCombination, CombinedDiscount, LineDiscount
 
 from ..fake_db.fake_db import fake_plan, fake_internet, fake_combination_rule
 
@@ -24,8 +17,8 @@ router = APIRouter(
 
 @router.get(
     "/kt",
-    summary="combination of KT carrier plan",
-    response_description="combination of KT carrier plan",
+    summary="combination of KT carrier plan: Family, Single Combination",
+    response_description="combination of KT carrier plan: Family, Single Combination",
     response_model=CombinedDiscount,
     response_model_exclude_unset=True,
 )
@@ -45,6 +38,10 @@ async def select_carrier(
     try:
         stored_plan = [fake_plan[name] for name in q]
         base_line = is_base_line(stored_plan)
+        stored_plan.remove(base_line)
+        other_line = stored_plan
+        print(base_line)
+        print(other_line)
     except KeyError:
         raise HTTPException(status_code=404)
 
@@ -69,11 +66,27 @@ async def select_carrier(
         return single_combination
     else:
         # check 2 case
-        for plan in stored_plan:
-            pass
+        base_combination_rule = fake_combination_rule["family_base"]
+        other_combination_rule = fake_combination_rule["family_other"]
 
-    # sum_price = 0
-    # for splan in stored_plan:
-    #     splan.price
+        base_line["combination_rule"] = base_combination_rule
+        base_line["contract_discount"] = 0.25
+        base_line_model = LineDiscount(**base_line)
 
-    return stored_plan
+        list_of_other_line_model = []
+        for line in other_line:
+            line["combination_rule"] = other_combination_rule
+            line["contract_discount"] = 0.25
+            list_of_other_line_model.append(LineDiscount(**line))
+
+        result_combination = CombinedDiscount(
+            base_line=base_line_model,
+            internet=base_internet,
+            other_line=list_of_other_line_model,
+            sum_payment=sum_of_payment(
+                base_line=base_line_model,
+                ith=base_internet,
+                other_line=list_of_other_line_model,
+            ),
+        )
+        return result_combination

@@ -55,6 +55,10 @@ class LineDiscount(PlanKT):
     class Config:
         schema_extra = {
             "example": {
+                "price": 100000,
+                "title": "스페셜",
+                "url": "kt.com",
+                "carrier": "5G",
                 "contract_discount": 0.25,
                 "combination_rule": {
                     "name": "싱글 결합",

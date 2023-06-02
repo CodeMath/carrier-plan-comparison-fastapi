@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query, HTTPException
 from typing_extensions import Annotated
 
-from ..internal.planKT import PlanKT, InternatCombination
+from ..internal.modle_kt import PlanKT, InternatCombination
 from ..fake_db.fake_db import fake_plan, fake_internet
 
 
