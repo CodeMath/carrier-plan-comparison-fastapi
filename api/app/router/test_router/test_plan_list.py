@@ -54,7 +54,7 @@ def test_get_list_internet():
 
 
 def test_get_list_internet_404():
-    response = client.get(prefix + "/mobile", params={"price": 90000, "wifi": 2})
+    response = client.get(prefix + "/internet", params={"price": 90000, "wifi": 2})
 
     assert response.status_code == 404
     assert response.json() == {"detail": "Not Found"}
