@@ -3,17 +3,7 @@ from typing import Union
 from typing_extensions import Annotated
 
 # KT Dependency
-exclude_res_model = response_model_exclude_unset = True
-
-
-class CarrierPlanQueryParams:
-    def __init__(
-        self,
-        price: Union[int, None] = None,
-        tp: str = "all",
-    ):
-        self.price = price
-        self.tp = tp
+carrier_type = {"all": {"tp": "all"}, "5g": {"tp": "5g"}, "lte": {"tp": "lte"}}
 
 
 async def router_get_token_headeer(x_token: Annotated[str, Header()]):
