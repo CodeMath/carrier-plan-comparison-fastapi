@@ -1,9 +1,16 @@
-from fastapi import Depends, APIRouter, Query, HTTPException
+from fastapi import APIRouter, Query, HTTPException
 from typing_extensions import Annotated
 from typing import Union
-from pydantic import Required
 
-from ..internal.planKT import PlanKT, fake_plan, InternatCombination, fake_internet
+from ..internal.planKT import (
+    PlanKT,
+    fake_plan,
+    InternatCombination,
+    fake_internet,
+    CombinedDiscount,
+    LineDiscount,
+    fake_combination_rule,
+)
 from ..dependency import carrier_type
 
 
@@ -50,10 +57,37 @@ def is_base_line(plan: list[PlanKT]):
     return min(plan, key=lambda x: x["price"])
 
 
+def calculate_contract_contract(line_model: LineDiscount):
+    line = LineDiscount(**line_model)
+    sums = line.price * (1 - line.contract_discount)
+
+    if line.combination_rule.is_flat_discount:
+        return sums - line.combination_rule.combination_discount
+    else:
+        return sums * (1 - line.combination_rule.combination_discount)
+
+
+def sum_of_payment(
+    base_line: LineDiscount,
+    ith: InternatCombination,
+    other_line: Union[list[LineDiscount], None] = [],
+):
+    sums = ith.price
+    sums += calculate_contract_contract(base_line)
+
+    for discount in other_line:
+        discount_model = LineDiscount(**discount)
+        sums += calculate_contract_contract(discount_model)
+
+    return sums
+
+
 @router.get(
     "/kt/combination",
     summary="combination of KT carrier plan",
     response_description="combination of KT carrier plan",
+    response_model=CombinedDiscount,
+    # response_model_exclude_unset=True,
 )
 async def select_carrier(
     q: Annotated[
@@ -83,16 +117,17 @@ async def select_carrier(
 
     # single combination
     if len(q) == 1:
-        stored_plan[0].update(
-            {
-                "title": "싱글 결합",
-                "contract_discount_25%": base_line["price"] * 0.25,
-                "single_contract_discount_25%": base_line["price"] * 0.25,
-                "discount_sum": base_line["price"] * 0.5,
-                "internet": base_internet,
-                "payment": base_line["price"] * 0.5 + base_internet.price,
-            }
+        combination_rule = fake_combination_rule["single"]
+        base_line["combination_rule"] = combination_rule
+
+        base_line_model = LineDiscount(**base_line)
+
+        single_combination = CombinedDiscount(
+            base_line=base_line_model,
+            internet=base_internet,
+            sum_payment=sum_of_payment(base_line=base_line, ith=base_internet),
         )
+        return single_combination
     else:
         # check 2 case
         for plan in stored_plan:

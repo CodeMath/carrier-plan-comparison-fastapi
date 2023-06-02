@@ -2,6 +2,15 @@ from pydantic import BaseModel, HttpUrl, Field
 from typing import Union
 
 
+class InternatCombination(BaseModel):
+    internet: str
+    price: int = Field(default=0, ge=0)
+    speed: int = Field(default=0, ge=0)
+
+    class Config:
+        schema_extra = {"example": {"internet": "slim", "price": 0, "speed": 0}}
+
+
 class PlanKT(BaseModel):
     price: int = Field(default=0, ge=0)
     title: Union[str, None] = None
@@ -40,40 +49,69 @@ fake_plan = {
 }
 
 
-class CombinedDiscount(BaseModel):
-    name: str = Field(default="choice_premiem", title="eng) choice_premiem")
-    title: str
-    base_line: PlanKT
+class CombinationRule(BaseModel):
+    name: str
+    carrier_line: int = Field(default=1)
     is_flat_discount: bool = Field(default=False)
-    base_discount: Union[float, int] = Field(default=0, ge=0)
-    other_discount: Union[float, None] = Field(default=0, ge=0)
-    internet_discount: Union[int, None] = Field(default=0, ge=0)
+    combination_discount: Union[float, int] = Field(default=0, ge=0)
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "name": "싱글 결합",
+                "carrier_line": 1,
+                "is_flat_discount": False,
+                "combination_discount": 0.25,
+            }
+        }
 
 
-fake_combination = [
-    {
-        "name": "single",
-        "title": "프리미엄 싱글 결합",
+class LineDiscount(PlanKT):
+    contract_discount: float = Field(default=0.25, ge=0)
+    combination_rule: Union[CombinationRule, None] = None
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "contract_discount": 0.25,
+                "is_flat_discount": False,
+                "combination_rule": {
+                    "name": "싱글 결합",
+                    "carrier_line": 1,
+                    "is_flat_discount": False,
+                    "combination_discount": 0.25,
+                },
+            }
+        }
+
+
+class CombinedDiscount(BaseModel):
+    base_line: LineDiscount
+    other_line: Union[list[LineDiscount], None] = None
+    internet: InternatCombination
+    sum_payment: int = Field(default=0, ge=0)
+
+
+fake_combination_rule = {
+    "single": {
+        "name": "싱글 결합",
+        "carrier_line": 1,
         "is_flat_discount": False,
-        "base_discount": 0.25,
-        "other_discount": 0,
-        "internet_discount": 0,
+        "combination_discount": 0.25,
     },
-    {
-        "name": "family",
-        "title": "프리미엄 가족 결합",
+    "family_base": {
+        "name": "프리미엄 가족 결합 베이스 회선",
+        "carrier_line": -1,
         "is_flat_discount": True,
-        "base_discount": 11000,
-        "other_discount": 0.25,
-        "internet_discount": 0,
+        "combination_discount": 11000,
     },
-]
-
-
-class InternatCombination(BaseModel):
-    internet: str
-    price: int = Field(default=0, ge=0)
-    speed: int = Field(default=0, ge=0)
+    "family_other": {
+        "name": "프리미엄 가족 결합 추가 회선",
+        "carrier_line": -1,
+        "is_flat_discount": False,
+        "combination_discount": 0.25,
+    },
+}
 
 
 fake_internet = {
