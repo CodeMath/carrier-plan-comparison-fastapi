@@ -69,77 +69,77 @@ fake_internet = {
 }
 
 
-fake_sum_combination = [
-    {
-        "mobile_sum_price": [0, 22000],
-        "mobile_discount": 0,
-        "internet": "슬림",
-        "internet_discount": 1650,
+fake_sum_combination = {
+    "22000": {
+        "slim": {
+            "mobile_sum_price": [0, 22000],
+            "mobile_discount": 0,
+            "internet_discount": 1650,
+        },
+        "none-slim": {
+            "mobile_sum_price": [0, 22000],
+            "mobile_discount": 0,
+            "internet_discount": 2200,
+        },
     },
-    {
-        "mobile_sum_price": [0, 22000],
-        "mobile_discount": 0,
-        "internet": "no슬림",
-        "internet_discount": 2200,
+    "64899": {
+        "slim": {
+            "mobile_sum_price": [22000, 64899],
+            "mobile_discount": 5500,
+            "internet_discount": 5500,
+        },
+        "none-slim": {
+            "mobile_sum_price": [22000, 64899],
+            "mobile_discount": 0,
+            "internet_discount": 3300,
+        },
     },
-    {
-        "mobile_sum_price": [22000, 64899],
-        "mobile_discount": 5500,
-        "internet": "슬림",
-        "internet_discount": 5500,
+    "108899": {
+        "slim": {
+            "mobile_sum_price": [64900, 108899],
+            "mobile_discount": 3300,
+            "internet_discount": 5500,
+        },
+        "none-slim": {
+            "mobile_sum_price": [64900, 108899],
+            "mobile_discount": 5500,
+            "internet_discount": 5500,
+        },
     },
-    {
-        "mobile_sum_price": [22000, 64899],
-        "mobile_discount": 0,
-        "internet": "no슬림",
-        "internet_discount": 3300,
+    "141899": {
+        "slim": {
+            "mobile_sum_price": [108900, 141899],
+            "mobile_discount": 14300,
+            "internet_discount": 5500,
+        },
+        "none-slim": {
+            "mobile_sum_price": [108900, 141899],
+            "mobile_discount": 16610,
+            "internet_discount": 5500,
+        },
     },
-    {
-        "mobile_sum_price": [64900, 108899],
-        "mobile_discount": 3300,
-        "internet": "슬림",
-        "internet_discount": 5500,
+    "174899": {
+        "slim": {
+            "mobile_sum_price": [141900, 174899],
+            "mobile_discount": 18700,
+            "internet_discount": 5500,
+        },
+        "none-slim": {
+            "mobile_sum_price": [141900, 174899],
+            "mobile_discount": 22110,
+            "internet_discount": 5500,
+        },
     },
-    {
-        "mobile_sum_price": [64900, 108899],
-        "mobile_discount": 5500,
-        "internet": "no슬림",
-        "internet_discount": 5500,
+    "999999": {
+        "slim": {
+            "mobile_sum_price": [174900, 999999],
+            "mobile_discount": 23100,
+            "internet_discount": 5500,
+        },
+        "none-slim": {
+            "mobile_sum_price": [174900, 999999],
+            "mobile_discount": 27610,
+            "internet_discount": 5500,
+        },
     },
-    {
-        "mobile_sum_price": [108900, 141899],
-        "mobile_discount": 14300,
-        "internet": "슬림",
-        "internet_discount": 5500,
-    },
-    {
-        "mobile_sum_price": [108900, 141899],
-        "mobile_discount": 16610,
-        "internet": "no슬림",
-        "internet_discount": 5500,
-    },
-    {
-        "mobile_sum_price": [141900, 174899],
-        "mobile_discount": 18700,
-        "internet": "슬림",
-        "internet_discount": 5500,
-    },
-    {
-        "mobile_sum_price": [141900, 174899],
-        "mobile_discount": 22110,
-        "internet": "no슬림",
-        "internet_discount": 5500,
-    },
-    {
-        "mobile_sum_price": [174900, 999999],
-        "mobile_discount": 23100,
-        "internet": "슬림",
-        "internet_discount": 5500,
-    },
-    {
-        "mobile_sum_price": [174900, 999999],
-        "mobile_discount": 27610,
-        "internet": "no슬림",
-        "internet_discount": 5500,
-    },
-]
+}
