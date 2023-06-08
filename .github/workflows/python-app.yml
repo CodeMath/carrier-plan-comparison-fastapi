@@ -38,6 +38,5 @@ jobs:
         uses: xarray-contrib/issue-from-pytest-log@main
         if: |
           failure()
-          && ...
         with:
           log-path: pytest-log.jsonl
