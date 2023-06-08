@@ -38,7 +38,7 @@ def test_get_list_mobile_lte():
 
 
 def test_get_list_mobile_404():
-    response = client.get(prefix + "/get/mobile", params={"price": 10, "tp": "none"})
+    response = client.get(prefix + "/get/mobile", params={"titles": "Error"})
 
     assert response.status_code == 404
     assert response.json() == {"detail": "Not Found"}
