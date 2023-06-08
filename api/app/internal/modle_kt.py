@@ -78,9 +78,9 @@ class CombinedDiscount(BaseModel):
 
 
 class SumDiscountCombination(BaseModel):
-    mobile_sum_price: list[LineDiscount]
+    mobile_plan_list: list[LineDiscount]
     mobile_discount: int = Field(default=0, ge=0)
-    internet: str = Field(default="slim")
+    internet: Union[InternatCombination, None] = None
     internet_discount: int = Field(default=0, ge=0)
 
 

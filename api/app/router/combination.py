@@ -9,6 +9,7 @@ from ..internal.modle_kt import (
     CombinedDiscount,
     LineDiscount,
     ComparisonPlan,
+    SumDiscountCombination,
 )
 
 from ..fake_db.fake_db import fake_plan, fake_internet, fake_combination_rule
@@ -102,8 +103,8 @@ async def select_carrier(
     "/kt/between",
     summary="Comparison of Family and Sum plan",
     response_description="Comparison of Family and Sum plan",
-    response_model=ComparisonPlan,
-    response_model_exclude_unset=True,
+    # response_model=ComparisonPlan,
+    # response_model_exclude_unset=True,
 )
 async def comparison_plan(
     q: Annotated[
@@ -120,8 +121,7 @@ async def comparison_plan(
         base_line = is_base_line(stored_plan)
         stored_plan.remove(base_line)
         other_line = stored_plan
-        print(base_line)
-        print(other_line)
+
     except KeyError:
         raise HTTPException(status_code=404)
 
@@ -130,24 +130,31 @@ async def comparison_plan(
         base_internet = InternatCombination(**internet)
     except KeyError:
         raise HTTPException(status_code=404)
-    # 1) start Plan
 
-    comparison_plans = ComparisonPlan(
+    # 1) start Plan
+    other_line_pay = 0
+    for plan in stored_plan:
+        other_line_pay += plan["price"]
+    result_comparison_plans = ComparisonPlan(
         family_pay=0,
-        sum_pay=sum(
-            [
-                price[1]
-                for plan in stored_plan.items()
-                for price in plan
-                if price[0] == "price"
-            ]
-        ),
+        sum_pay=sum([base_line["price"], other_line_pay]),
         family_plan=None,
         sum_plan=None,
     )
     # 2) check range sum pay
+    mobile_plan_list = [LineDiscount(**base_line)]
 
-    sum_plans_ith = pay_range_combination(comparison_plans.sum_pay)
+    for i in stored_plan:
+        mobile_plan_list.append(LineDiscount(**i))
+
+    # result_comparison_plans.sum_plan
+    sum_discout_combination = SumDiscountCombination(
+        mobile_plan_list=mobile_plan_list,
+        mobile_discount=0,
+        internet=base_internet,
+        internet_discount=0,
+    )
+    sum_plans_ith = pay_range_combination(result_comparison_plans.sum_pay)
     if ith.lower() != "slim":
         sum_plan = sum_plans_ith["none-slim"]
     else:
@@ -155,16 +162,17 @@ async def comparison_plan(
 
     # check
     if in_range(
-        comparison_plans.sum_pay,
+        result_comparison_plans.sum_pay,
         sum_plan["mobile_sum_price"][0],
         sum_plan["mobile_sum_price"][1],
     ):
-        sum_plan["mobile_discount"]
-        sum_plan["internet_discount"]
-        comparison_plans.sum_plan = 0
+        sum_discout_combination.mobile_discount = sum_plan["mobile_discount"]
+        sum_discout_combination.internet_discount = sum_plan["internet_discount"]
+        sum_discout_combination.mobile_plan_list = [base_line, stored_plan]
+
+    result_comparison_plans.sum_plan = sum_discout_combination
 
     # 3) get Family Plans
-
     base_combination_rule = fake_combination_rule["family_base"]
     other_combination_rule = fake_combination_rule["family_other"]
 
@@ -178,7 +186,7 @@ async def comparison_plan(
         line["contract_discount"] = 0.25
         list_of_other_line_model.append(LineDiscount(**line))
 
-    result_combination = CombinedDiscount(
+    family_combination = CombinedDiscount(
         base_line=base_line_model,
         internet=base_internet,
         other_line=list_of_other_line_model,
@@ -189,4 +197,7 @@ async def comparison_plan(
         ),
     )
 
-    return comparison_plans
+    result_comparison_plans.family_plan = family_combination
+    result_comparison_plans.family_pay = family_combination.sum_payment
+    print(result_comparison_plans)
+    return result_comparison_plans

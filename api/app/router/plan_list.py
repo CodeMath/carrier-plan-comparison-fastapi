@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Query, HTTPException
 from typing_extensions import Annotated
-
+from typing import Union
 from ..internal.modle_kt import PlanKT, InternatCombination
 from ..fake_db.fake_db import fake_plan, fake_internet
 
@@ -11,7 +11,34 @@ router = APIRouter(
 
 
 @router.get(
-    "/mobile",
+    "/get/mobile",
+    summary="Get KT carrier plan by title",
+    response_description="Get KT carrier plan by title",
+)
+async def get_item(
+    titles: Annotated[
+        Union[list[str], None],
+        Query(
+            examples=fake_plan,
+        ),
+    ]
+):
+    """
+    Get KT carrier plan by titles
+    - **titles**: ["초이스 프리미엄", "베이직"]
+    """
+    result = []
+    for title in titles:
+        find_plan = [plan for plan in fake_plan.values() if plan["title"] == title]
+        if find_plan:
+            result.append(find_plan[0])
+        else:
+            raise HTTPException(status_code=404)
+    return result
+
+
+@router.get(
+    "/list/mobile",
     response_model=list[PlanKT],
     response_model_exclude_unset=True,
     summary="Get list KT carrier plan",
@@ -54,7 +81,7 @@ async def get_items(
 
 
 @router.get(
-    "/internet",
+    "/list/internet",
     response_model=list[InternatCombination],
     response_model_exclude_unset=True,
     summary="Get list KT internet plan",

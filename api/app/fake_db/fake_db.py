@@ -38,6 +38,12 @@ fake_combination_rule = {
         "is_flat_discount": False,
         "combination_discount": 0.25,
     },
+    "sums": {
+        "name": "총액 가족 결합 회선",
+        "carrier_line": -1,
+        "is_flat_discount": True,
+        "combination_discount": 0,
+    },
 }
 
 
