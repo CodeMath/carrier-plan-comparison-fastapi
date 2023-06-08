@@ -7,13 +7,13 @@ prefix = router.prefix
 
 
 def test_get_list_mobile():
-    response = client.get(prefix + "/get/mobile", params={"price": 115000, "tp": "5g"})
+    response = client.get(prefix + "/get/mobile", params={"titles": ["베이직"]})
 
     assert response.status_code == 200
     assert response.json() == [
         {
-            "price": 130000,
-            "title": "초이스 프리미엄",
+            "price": 80000,
+            "title": "베이직",
             "carrier": "5G",
         }
     ]
