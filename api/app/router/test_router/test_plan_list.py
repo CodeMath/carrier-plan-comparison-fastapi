@@ -7,7 +7,7 @@ prefix = router.prefix
 
 
 def test_get_list_mobile():
-    response = client.get(prefix + "/mobile", params={"price": 115000, "tp": "5g"})
+    response = client.get(prefix + "/get/mobile", params={"price": 115000, "tp": "5g"})
 
     assert response.status_code == 200
     assert response.json() == [
@@ -20,7 +20,7 @@ def test_get_list_mobile():
 
 
 def test_get_list_mobile_lte():
-    response = client.get(prefix + "/mobile", params={"price": 30000, "tp": "lte"})
+    response = client.get(prefix + "/list/mobile", params={"price": 30000, "tp": "lte"})
 
     assert response.status_code == 200
     assert response.json() == [
@@ -38,14 +38,14 @@ def test_get_list_mobile_lte():
 
 
 def test_get_list_mobile_404():
-    response = client.get(prefix + "/mobile", params={"price": 10, "tp": "none"})
+    response = client.get(prefix + "/get/mobile", params={"price": 10, "tp": "none"})
 
     assert response.status_code == 404
     assert response.json() == {"detail": "Not Found"}
 
 
 def test_get_list_internet():
-    response = client.get(prefix + "/internet", params={"price": 60000, "wifi": 2})
+    response = client.get(prefix + "/list/internet", params={"price": 60000, "wifi": 2})
 
     assert response.status_code == 200
     assert response.json() == [
@@ -54,7 +54,7 @@ def test_get_list_internet():
 
 
 def test_get_list_internet_404():
-    response = client.get(prefix + "/internet", params={"price": 90000, "wifi": 2})
+    response = client.get(prefix + "/list/internet", params={"price": 90000, "wifi": 2})
 
     assert response.status_code == 404
     assert response.json() == {"detail": "Not Found"}

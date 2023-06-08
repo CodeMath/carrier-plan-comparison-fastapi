@@ -142,9 +142,17 @@ async def comparison_plan(
         sum_plan=None,
     )
     # 2) check range sum pay
-    mobile_plan_list = [LineDiscount(**base_line)]
+    sums_base_line = base_line
+    sums_base_line["contract_discount"] = 0.25
+    sums_base_line["combination_rule"] = fake_combination_rule["sums"]
+
+    mobile_plan_list = []
+
+    mobile_plan_list.append(LineDiscount(**sums_base_line))
 
     for i in stored_plan:
+        i["contract_discount"] = 0.25
+        i["combination_rule"] = fake_combination_rule["sums"]
         mobile_plan_list.append(LineDiscount(**i))
 
     # result_comparison_plans.sum_plan
@@ -168,9 +176,16 @@ async def comparison_plan(
     ):
         sum_discout_combination.mobile_discount = sum_plan["mobile_discount"]
         sum_discout_combination.internet_discount = sum_plan["internet_discount"]
-        sum_discout_combination.mobile_plan_list = [base_line, stored_plan]
+        # sum_discout_combination.mobile_plan_list = [base_line, stored_plan]
 
     result_comparison_plans.sum_plan = sum_discout_combination
+    sum_pay_discount_result = (
+        (result_comparison_plans.sum_pay * 0.75)
+        + base_internet.price
+        - sum_plan["mobile_discount"]
+        - sum_plan["internet_discount"]
+    )
+    result_comparison_plans.sum_pay = sum_pay_discount_result
 
     # 3) get Family Plans
     base_combination_rule = fake_combination_rule["family_base"]
@@ -199,5 +214,5 @@ async def comparison_plan(
 
     result_comparison_plans.family_plan = family_combination
     result_comparison_plans.family_pay = family_combination.sum_payment
-    print(result_comparison_plans)
+
     return result_comparison_plans
