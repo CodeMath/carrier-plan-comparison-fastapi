@@ -2,6 +2,9 @@
 
 [![pytest](https://github.com/CodeMath/carrier-plan-comparison-fastapi/actions/workflows/python-app.yml/badge.svg)](https://github.com/CodeMath/carrier-plan-comparison-fastapi/actions/workflows/python-app.yml)
 
+<!-- Pytest Coverage Comment:Begin -->
+<!-- Pytest Coverage Comment:End -->
+
 
 ## docker build test
 
