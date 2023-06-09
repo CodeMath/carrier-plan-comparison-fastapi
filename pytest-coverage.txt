@@ -5,19 +5,66 @@ plugins: cov-4.1.0, anyio-3.7.0
 collected 10 items
 
 api/app/router/test_router/test_plan_list.py .....                       [ 50%]
-api/app/router/test_router/test_user_plan.py .....                       [100%]
+api/app/router/test_router/test_user_plan.py .FFFF                       [100%]
 
+=================================== FAILURES ===================================
+________________________ test_select_carrier_single_404 ________________________
+
+    def test_select_carrier_single_404():
+>       response = client.get(
+            prefix + "/kt", json={"mobile_line": ["basic"], "internet_line": "slim1"}
+        )
+E       TypeError: get() got an unexpected keyword argument 'json'
+
+api/app/router/test_router/test_user_plan.py:34: TypeError
+_________________________ test_select_carriers_family __________________________
+
+    def test_select_carriers_family():
+>       response = client.get(
+            prefix + "/kt",
+            json={"mobile_line": ["basic", "special"], "internet_line": "slim"},
+        )
+E       TypeError: get() got an unexpected keyword argument 'json'
+
+api/app/router/test_router/test_user_plan.py:43: TypeError
+_______________________ test_select_carriers_family_404 ________________________
+
+    def test_select_carriers_family_404():
+>       response = client.get(
+            prefix + "/kt", json={"mobile_line": ["basic"], "internet_line": "slimless"}
+        )
+E       TypeError: get() got an unexpected keyword argument 'json'
+
+api/app/router/test_router/test_user_plan.py:83: TypeError
+______________________ test_between_carrieres_family_sums ______________________
+
+    def test_between_carrieres_family_sums():
+>       response = client.get(
+            prefix + "/kt/between",
+            json={"mobile_line": ["basic", "special"], "internet_line": "slim"},
+        )
+E       TypeError: get() got an unexpected keyword argument 'json'
+
+api/app/router/test_router/test_user_plan.py:92: TypeError
 - generated xml file: /home/runner/work/carrier-plan-comparison-fastapi/carrier-plan-comparison-fastapi/pytest.xml -
 
 ---------- coverage: platform linux, python 3.9.16-final-0 -----------
-Name                            Stmts   Miss  Cover   Missing
--------------------------------------------------------------
-api/app/dependency.py               6      6     0%   1-10
-api/app/router/combination.py      95      7    93%   52-53, 125-126, 131-132, 167
-api/app/router/plan_list.py        59     20    66%   61, 63, 69-80, 104, 112-122
--------------------------------------------------------------
-TOTAL                             295     33    89%
+Name                                           Stmts   Miss  Cover   Missing
+----------------------------------------------------------------------------
+api/app/dependency.py                              6      6     0%   1-10
+api/app/internal/calculater.py                    19      3    84%   20, 39-40
+api/app/internal/calculater_range.py              10      7    30%   5-12, 16
+api/app/router/combination.py                     95     66    31%   44-45, 50-51, 68-91, 102-201
+api/app/router/plan_list.py                       59     20    66%   61, 63, 69-80, 104, 112-122
+api/app/router/test_router/test_user_plan.py      25      8    68%   38-39, 48-50, 87-88, 97-98
+----------------------------------------------------------------------------
+TOTAL                                            298    110    63%
 
-12 files skipped due to complete coverage.
+9 files skipped due to complete coverage.
 
-============================== 10 passed in 0.60s ==============================
+=========================== short test summary info ============================
+FAILED api/app/router/test_router/test_user_plan.py::test_select_carrier_single_404 - TypeError: get() got an unexpected keyword argument 'json'
+FAILED api/app/router/test_router/test_user_plan.py::test_select_carriers_family - TypeError: get() got an unexpected keyword argument 'json'
+FAILED api/app/router/test_router/test_user_plan.py::test_select_carriers_family_404 - TypeError: get() got an unexpected keyword argument 'json'
+FAILED api/app/router/test_router/test_user_plan.py::test_between_carrieres_family_sums - TypeError: get() got an unexpected keyword argument 'json'
+========================= 4 failed, 6 passed in 0.76s ==========================
