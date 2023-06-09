@@ -10,6 +10,7 @@ from ..internal.modle_kt import (
     LineDiscount,
     ComparisonPlan,
     SumDiscountCombination,
+    Carriers,
 )
 
 from ..fake_db.fake_db import fake_plan, fake_internet, fake_combination_rule
@@ -22,28 +23,19 @@ router = APIRouter(
 )
 
 
-@router.get(
+@router.post(
     "/kt",
     summary="combination of KT carrier plan: Family, Single Combination",
     response_description="combination of KT carrier plan: Family, Single Combination",
     response_model=CombinedDiscount,
     response_model_exclude_unset=True,
 )
-async def select_carrier(
-    q: Annotated[
-        Union[list[str], None],
-        Query(
-            min_lenght=1,
-            examples=fake_plan,
-        ),
-    ],
-    ith: Annotated[str, Query(examples=fake_internet)],
-):
+async def select_carrier(lines: Carriers):
     """
     - **q**: each KT plan name
     """
     try:
-        stored_plan = [fake_plan[name] for name in q]
+        stored_plan = [fake_plan[name] for name in lines.mobile_line]
         base_line = is_base_line(stored_plan)
         stored_plan.remove(base_line)
         other_line = stored_plan
@@ -53,13 +45,13 @@ async def select_carrier(
         raise HTTPException(status_code=404)
 
     try:
-        internet = fake_internet[ith]
+        internet = fake_internet[lines.internet_line]
         base_internet = InternatCombination(**internet)
     except KeyError:
         raise HTTPException(status_code=404)
 
     # single combination
-    if len(q) == 1:
+    if len(lines.mobile_line) == 1:
         combination_rule = fake_combination_rule["single"]
         base_line["combination_rule"] = combination_rule
         base_line["contract_discount"] = 0.25
@@ -99,25 +91,16 @@ async def select_carrier(
         return result_combination
 
 
-@router.get(
+@router.post(
     "/kt/between",
     summary="Comparison of Family and Sum plan",
     response_description="Comparison of Family and Sum plan",
     # response_model=ComparisonPlan,
     # response_model_exclude_unset=True,
 )
-async def comparison_plan(
-    q: Annotated[
-        Union[list[str], None],
-        Query(
-            min_lenght=1,
-            examples=fake_plan,
-        ),
-    ],
-    ith: Annotated[str, Query(examples=fake_internet)],
-):
+async def comparison_plan(lines: Carriers):
     try:
-        stored_plan = [fake_plan[name] for name in q]
+        stored_plan = [fake_plan[name] for name in lines.mobile_line]
         base_line = is_base_line(stored_plan)
         stored_plan.remove(base_line)
         other_line = stored_plan
@@ -126,7 +109,7 @@ async def comparison_plan(
         raise HTTPException(status_code=404)
 
     try:
-        internet = fake_internet[ith]
+        internet = fake_internet[lines.internet_line]
         base_internet = InternatCombination(**internet)
     except KeyError:
         raise HTTPException(status_code=404)
@@ -163,7 +146,7 @@ async def comparison_plan(
         internet_discount=0,
     )
     sum_plans_ith = pay_range_combination(result_comparison_plans.sum_pay)
-    if ith.lower() != "slim":
+    if lines.internet_line.lower() != "slim":
         sum_plan = sum_plans_ith["none-slim"]
     else:
         sum_plan = sum_plans_ith["slim"]

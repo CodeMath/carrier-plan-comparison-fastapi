@@ -7,7 +7,9 @@ prefix = router.prefix
 
 
 def test_select_carrier_single():
-    response = client.get(prefix + "/kt", params={"q": "basic", "ith": "slim"})
+    response = client.post(
+        prefix + "/kt", json={"mobile_line": ["basic"], "internet_line": "slim"}
+    )
 
     assert response.status_code == 200
     assert response.json() == {
@@ -29,7 +31,9 @@ def test_select_carrier_single():
 
 
 def test_select_carrier_single_404():
-    response = client.get(prefix + "/kt", params={"q": "basic", "ith": "no internet"})
+    response = client.get(
+        prefix + "/kt", json={"mobile_line": ["basic1"], "internet_line": "slim1"}
+    )
 
     assert response.status_code == 404
     assert response.json() == {"detail": "Not Found"}
@@ -37,7 +41,8 @@ def test_select_carrier_single_404():
 
 def test_select_carriers_family():
     response = client.get(
-        prefix + "/kt", params={"q": ["basic", "special"], "ith": "slim"}
+        prefix + "/kt",
+        json={"mobile_line": ["basic", "special"], "internet_line": "slim"},
     )
 
     assert response.status_code == 200
@@ -76,7 +81,7 @@ def test_select_carriers_family():
 
 def test_select_carriers_family_404():
     response = client.get(
-        prefix + "/kt", params={"q": ["basic", "special"], "ith": "slimsssss"}
+        prefix + "/kt", json={"mobile_line": ["basic"], "internet_line": "slimless"}
     )
 
     assert response.status_code == 404
@@ -85,7 +90,8 @@ def test_select_carriers_family_404():
 
 def test_between_carrieres_family_sums():
     response = client.get(
-        prefix + "/kt/between", params={"q": ["basic", "special"], "ith": "slim"}
+        prefix + "/kt/between",
+        json={"mobile_line": ["basic", "special"], "internet_line": "slim"},
     )
 
     assert response.status_code == 200

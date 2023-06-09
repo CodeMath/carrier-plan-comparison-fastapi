@@ -89,3 +89,8 @@ class ComparisonPlan(BaseModel):
     sum_pay: int = Field(default=0, ge=0)
     family_plan: Union[CombinedDiscount, None] = None
     sum_plan: Union[SumDiscountCombination, None] = None
+
+
+class Carriers(BaseModel):
+    mobile_line: list[str]
+    internet_line: str
