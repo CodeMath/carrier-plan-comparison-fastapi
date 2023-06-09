@@ -32,7 +32,7 @@ def test_select_carrier_single():
 
 def test_select_carrier_single_404():
     response = client.get(
-        prefix + "/kt", json={"mobile_line": ["basic1"], "internet_line": "slim1"}
+        prefix + "/kt", json={"mobile_line": ["basic"], "internet_line": "slim1"}
     )
 
     assert response.status_code == 404
