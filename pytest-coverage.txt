@@ -4,35 +4,20 @@ rootdir: /home/runner/work/carrier-plan-comparison-fastapi/carrier-plan-comparis
 plugins: cov-4.1.0, anyio-3.7.0
 collected 10 items
 
-api/app/router/test_router/test_plan_list.py F....                       [ 50%]
+api/app/router/test_router/test_plan_list.py .....                       [ 50%]
 api/app/router/test_router/test_user_plan.py .....                       [100%]
 
-=================================== FAILURES ===================================
-_____________________________ test_get_list_mobile _____________________________
-
-    def test_get_list_mobile():
-        response = client.get(prefix + "/get/mobile", params={"titles": ["베이직1"]})
-    
->       assert response.status_code == 200
-E       assert 404 == 200
-E        +  where 404 = <Response [404 Not Found]>.status_code
-
-api/app/router/test_router/test_plan_list.py:12: AssertionError
 - generated xml file: /home/runner/work/carrier-plan-comparison-fastapi/carrier-plan-comparison-fastapi/pytest.xml -
 
 ---------- coverage: platform linux, python 3.9.16-final-0 -----------
-Name                                           Stmts   Miss  Cover   Missing
-----------------------------------------------------------------------------
-api/app/dependency.py                              6      6     0%   1-10
-api/app/router/combination.py                     95      7    93%   52-53, 125-126, 131-132, 167
-api/app/router/plan_list.py                       59     22    63%   34, 37, 61, 63, 69-80, 104, 112-122
-api/app/router/test_router/test_plan_list.py      25      1    96%   13
-----------------------------------------------------------------------------
-TOTAL                                            295     36    88%
+Name                            Stmts   Miss  Cover   Missing
+-------------------------------------------------------------
+api/app/dependency.py               6      6     0%   1-10
+api/app/router/combination.py      95      7    93%   52-53, 125-126, 131-132, 167
+api/app/router/plan_list.py        59     20    66%   61, 63, 69-80, 104, 112-122
+-------------------------------------------------------------
+TOTAL                             295     33    89%
 
-11 files skipped due to complete coverage.
+12 files skipped due to complete coverage.
 
-=========================== short test summary info ============================
-FAILED api/app/router/test_router/test_plan_list.py::test_get_list_mobile - assert 404 == 200
- +  where 404 = <Response [404 Not Found]>.status_code
-========================= 1 failed, 9 passed in 0.62s ==========================
+============================== 10 passed in 0.56s ==============================
