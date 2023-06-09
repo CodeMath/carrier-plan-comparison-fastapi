@@ -7,7 +7,7 @@ prefix = router.prefix
 
 
 def test_get_list_mobile():
-    response = client.get(prefix + "/get/mobile", params={"titles": ["베이직1"]})
+    response = client.get(prefix + "/get/mobile", params={"titles": ["베이직"]})
 
     assert response.status_code == 200
     assert response.json() == [
