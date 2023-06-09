@@ -38,6 +38,8 @@ jobs:
           pytest --junitxml=pytest.xml --cov-report=term-missing:skip-covered --cov=api | tee pytest-coverage.txt
 
       - name: Pytest Coverage Comment
+        if: ${{ github.ref == 'refs/heads/main' }}
+        id: coverageComment
         uses: MishaKav/pytest-coverage-comment@main
         with:
           pytest-coverage-path: pytest-coverage.txt
