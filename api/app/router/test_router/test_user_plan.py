@@ -31,7 +31,7 @@ def test_select_carrier_single():
 
 
 def test_select_carrier_single_404():
-    response = client.get(
+    response = client.post(
         prefix + "/kt", json={"mobile_line": ["basic"], "internet_line": "slim1"}
     )
 
@@ -40,7 +40,7 @@ def test_select_carrier_single_404():
 
 
 def test_select_carriers_family():
-    response = client.get(
+    response = client.post(
         prefix + "/kt",
         json={"mobile_line": ["basic", "special"], "internet_line": "slim"},
     )
@@ -80,7 +80,7 @@ def test_select_carriers_family():
 
 
 def test_select_carriers_family_404():
-    response = client.get(
+    response = client.post(
         prefix + "/kt", json={"mobile_line": ["basic"], "internet_line": "slimless"}
     )
 
@@ -89,7 +89,7 @@ def test_select_carriers_family_404():
 
 
 def test_between_carrieres_family_sums():
-    response = client.get(
+    response = client.post(
         prefix + "/kt/between",
         json={"mobile_line": ["basic", "special"], "internet_line": "slim"},
     )
