@@ -94,3 +94,11 @@ class ComparisonPlan(BaseModel):
 class Carriers(BaseModel):
     mobile_line: list[str]
     internet_line: str
+
+
+class Internets(BaseModel):
+    internet: str
+    eng_internet: str
+    price: int
+    speed: int
+    wifi: int

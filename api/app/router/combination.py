@@ -19,7 +19,10 @@ from ..fake_db.fake_db import fake_plan, fake_internet, fake_combination_rule
 router = APIRouter(
     prefix="/combination",
     tags=["combination"],
-    responses={404: {"description": "404 not found"}},
+    responses={
+        404: {"description": "404 not found"},
+        403: {"description": "403 Error"},
+    },
 )
 
 
@@ -35,6 +38,8 @@ async def select_carrier(lines: Carriers):
     - **q**: each KT plan name
     """
     try:
+        if len(lines.mobile_line) > 5:
+            raise HTTPException(status_code=403)
         stored_plan = [fake_plan[name] for name in lines.mobile_line]
         base_line = is_base_line(stored_plan)
         stored_plan.remove(base_line)

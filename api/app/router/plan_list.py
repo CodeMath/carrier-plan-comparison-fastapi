@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query, HTTPException
 from typing_extensions import Annotated
 from typing import Union
-from ..internal.modle_kt import PlanKT, InternatCombination
+from ..internal.modle_kt import PlanKT, InternatCombination, Internets
 from ..fake_db.fake_db import fake_plan, fake_internet
 
 
@@ -15,7 +15,7 @@ router = APIRouter(
     summary="Get KT carrier plan by title",
     response_description="Get KT carrier plan by title",
 )
-async def get_item(
+async def get_mobile_item(
     titles: Annotated[
         Union[list[str], None],
         Query(
@@ -44,7 +44,7 @@ async def get_item(
     summary="Get list KT carrier plan",
     response_description="Get list KT carrier plan",
 )
-async def get_items(
+async def get_list_mobile_items(
     price: Annotated[int, Query(ge=0)] = 0,
     tp: Annotated[str, Query(example="all")] = "all",
 ):
@@ -81,13 +81,43 @@ async def get_items(
 
 
 @router.get(
+    "/get/internet",
+    summary="Get KT internet plan by title",
+    response_description="Get KT internet plan by title",
+    response_model=Internets,
+    response_model_exclude_unset=True,
+)
+async def get_internet_item(
+    title: Annotated[
+        Union[str, None],
+        Query(
+            examples=fake_internet,
+        ),
+    ]
+):
+    """
+    Get KT carrier plan by titles
+    - **title**: ["슬림"]
+    """
+    find_plan = [plan for plan in fake_internet.values() if plan["internet"] == title]
+    if find_plan:
+        eng_internet = [
+            key for key, plan in fake_internet.items() if find_plan[0] == plan
+        ]
+        find_plan[0]["eng_internet"] = eng_internet[0]
+        return find_plan[0]
+    else:
+        raise HTTPException(status_code=404)
+
+
+@router.get(
     "/list/internet",
     response_model=list[InternatCombination],
     response_model_exclude_unset=True,
     summary="Get list KT internet plan",
     response_description="Get list KT internet plan",
 )
-async def get_items(
+async def get_list_internet_items(
     price: Annotated[int, Query(ge=0)] = 0,
     wifi: Annotated[int, Query(ge=-1, le=2)] = -1,
 ):
