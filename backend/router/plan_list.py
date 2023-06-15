@@ -1,13 +1,40 @@
-from fastapi import APIRouter, Query, HTTPException
+from fastapi import APIRouter, Query, HTTPException, Depends
 from typing_extensions import Annotated
 from typing import Union
-from db.models.modle_kt import PlanKT, InternatCombination, Internets
+from db.models.modle_kt_schemas import PlanKT, InternatCombination, Internets
 from fake_db.fake_db import fake_plan, fake_internet
 
 
 router = APIRouter(
     prefix="/plan", tags=["plan"], responses={404: {"description": "404 not found"}}
 )
+
+
+from sqlalchemy.orm import Session
+from .crud import *
+from db.models.mobile_plan import *
+from db.session import *
+
+
+# Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+@router.post("/mobile", response_model=PlanKTinDB)
+def create_plan(plan: PlanKTinDB, db: Session = Depends(get_db)):
+    """
+    Error 나옴... 수정 필요
+    """
+    db_plan_ko_title = get_plan_by_ko_name(db=db, title=plan.title)
+    print(db_plan_ko_title)
+    if db_plan_ko_title:
+        raise HTTPException(status_code=400, detail="Already registered")
+    return create_plan(db=db, plan=plan)
 
 
 @router.get(
@@ -21,7 +48,8 @@ async def get_mobile_item(
         Query(
             examples=fake_plan,
         ),
-    ]
+    ],
+    db: Session = Depends(get_db),
 ):
     """
     Get KT carrier plan by titles
@@ -29,7 +57,8 @@ async def get_mobile_item(
     """
     result = []
     for title in titles:
-        find_plan = [plan for plan in fake_plan.values() if plan["title"] == title]
+        # find_plan = [plan for plan in fake_plan.values() if plan["title"] == title]
+        find_plan = get_plan_by_ko_name(db, title=title)
         if find_plan:
             result.append(find_plan[0])
         else:

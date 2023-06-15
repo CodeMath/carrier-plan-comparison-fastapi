@@ -4,7 +4,7 @@ from typing import Union
 from internal.calculater import is_base_line, sum_of_payment
 from internal.calculater_range import pay_range_combination, in_range
 
-from db.models.modle_kt import (
+from db.models.modle_kt_schemas import (
     InternatCombination,
     CombinedDiscount,
     LineDiscount,

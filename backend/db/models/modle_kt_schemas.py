@@ -27,15 +27,13 @@ class PlanKT(BaseModel):
                 "price": 100000,
                 "title": "스페셜",
                 "eng_title": "special",
-                "url": "kt.com",
+                "url": "https://kt.com",
                 "carrier": "5G",
             }
         }
 
 
 class PlanKTinDB(PlanKT):
-    id: int
-
     class Config:
         orm_mode = True
 
