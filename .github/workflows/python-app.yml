@@ -35,7 +35,7 @@ jobs:
 
       - name: Build coverage file
         run: |
-          pytest --junitxml=pytest.xml --cov-report=term-missing:skip-covered --cov=backend/app/router | tee pytest-coverage.txt
+          pytest --junitxml=pytest.xml --cov-report=term-missing:skip-covered --cov=backend/router | tee pytest-coverage.txt
 
       - name: Pytest Coverage Comment
         if: ${{ github.ref == 'refs/heads/main' }}
