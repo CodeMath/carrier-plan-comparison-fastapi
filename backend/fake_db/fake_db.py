@@ -1,20 +1,52 @@
 fake_plan = {
-    "choice_premiem": {"price": 130000, "title": "초이스 프리미엄", "carrier": "5G"},
-    "choice_special": {"price": 110000, "title": "초이스 스페셜", "carrier": "5G"},
-    "choice_basic": {"price": 90000, "title": "초이스 베이직", "carrier": "5G"},
-    "special": {"price": 100000, "title": "스페셜", "carrier": "5G"},
-    "special_Y": {"price": 100000, "title": "스페셜Y", "carrier": "5G"},
-    "basic": {"price": 80000, "title": "베이직", "carrier": "5G"},
-    "basic_Y": {"price": 80000, "title": "베이직Y", "carrier": "5G"},
+    "choice_premiem": {
+        "price": 130000,
+        "title": "초이스 프리미엄",
+        "carrier": "5G",
+        "eng_title": "choice_premiem",
+    },
+    "choice_special": {
+        "price": 110000,
+        "title": "초이스 스페셜",
+        "carrier": "5G",
+        "eng_title": "choice_special",
+    },
+    "choice_basic": {
+        "price": 90000,
+        "title": "초이스 베이직",
+        "carrier": "5G",
+        "eng_title": "choice_basic",
+    },
+    "special": {
+        "price": 100000,
+        "title": "스페셜",
+        "carrier": "5G",
+        "eng_title": "special",
+    },
+    "special_Y": {
+        "price": 100000,
+        "title": "스페셜Y",
+        "carrier": "5G",
+        "eng_title": "special_Y",
+    },
+    "basic": {"price": 80000, "title": "베이직", "carrier": "5G", "eng_title": "basic"},
+    "basic_Y": {
+        "price": 80000,
+        "title": "베이직Y",
+        "carrier": "5G",
+        "eng_title": "basic_Y",
+    },
     "data_on_premiem": {
         "price": 89000,
         "title": "데이터 온 프리미엄",
         "carrier": "LTE",
+        "eng_title": "data_on_premiem",
     },
     "data_on_premiem_Y": {
         "price": 89000,
         "title": "데이터 온 프리미엄",
         "carrier": "LTE",
+        "eng_title": "data_on_premiem_Y",
     },
 }
 

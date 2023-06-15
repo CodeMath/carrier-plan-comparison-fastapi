@@ -1,4 +1,4 @@
-from ..fake_db.fake_db import fake_sum_combination
+from fake_db.fake_db import fake_sum_combination
 
 
 def pay_range_combination(sum_pay: int) -> dict:

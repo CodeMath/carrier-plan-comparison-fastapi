@@ -6,3 +6,5 @@ frontend/
 .coverage
 ./pytest-coverage.txt
 ./pytest.xml
+.env
+mysql/data

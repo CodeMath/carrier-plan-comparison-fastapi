@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Query, HTTPException
 from typing_extensions import Annotated
 from typing import Union
-from ..internal.calculater import is_base_line, sum_of_payment
-from ..internal.calculater_range import pay_range_combination, in_range
+from internal.calculater import is_base_line, sum_of_payment
+from internal.calculater_range import pay_range_combination, in_range
 
-from ..internal.modle_kt import (
+from db.models.modle_kt import (
     InternatCombination,
     CombinedDiscount,
     LineDiscount,
@@ -13,7 +13,7 @@ from ..internal.modle_kt import (
     Carriers,
 )
 
-from ..fake_db.fake_db import fake_plan, fake_internet, fake_combination_rule
+from fake_db.fake_db import fake_plan, fake_internet, fake_combination_rule
 
 
 router = APIRouter(
@@ -44,8 +44,6 @@ async def select_carrier(lines: Carriers):
         base_line = is_base_line(stored_plan)
         stored_plan.remove(base_line)
         other_line = stored_plan
-        print(base_line)
-        print(other_line)
     except KeyError:
         raise HTTPException(status_code=404)
 
@@ -60,6 +58,15 @@ async def select_carrier(lines: Carriers):
         combination_rule = fake_combination_rule["single"]
         base_line["combination_rule"] = combination_rule
         base_line["contract_discount"] = 0.25
+        base_line["mobile_pay"] = (
+            base_line["price"]
+            - (
+                base_line["price"]
+                * base_line["combination_rule"]["combination_discount"]
+            )
+            - (base_line["price"] * base_line["contract_discount"])
+        )
+
         base_line_model = LineDiscount(**base_line)
 
         single_combination = CombinedDiscount(
@@ -75,12 +82,41 @@ async def select_carrier(lines: Carriers):
 
         base_line["combination_rule"] = base_combination_rule
         base_line["contract_discount"] = 0.25
+        if base_combination_rule["is_flat_discount"]:
+            base_line["mobile_pay"] = (
+                base_line["price"]
+                - (base_line["combination_rule"]["combination_discount"])
+                - (base_line["price"] * base_line["contract_discount"])
+            )
+        else:
+            base_line["mobile_pay"] = (
+                base_line["price"]
+                - (
+                    base_line["price"]
+                    * base_line["combination_rule"]["combination_discount"]
+                )
+                - (base_line["price"] * base_line["contract_discount"])
+            )
         base_line_model = LineDiscount(**base_line)
 
         list_of_other_line_model = []
         for line in other_line:
             line["combination_rule"] = other_combination_rule
             line["contract_discount"] = 0.25
+
+            if other_combination_rule["is_flat_discount"]:
+                line["mobile_pay"] = (
+                    line["price"]
+                    - (line["combination_rule"]["combination_discount"])
+                    - (line["price"] * line["contract_discount"])
+                )
+            else:
+                line["mobile_pay"] = (
+                    line["price"]
+                    - (line["price"] * line["combination_rule"]["combination_discount"])
+                    - (line["price"] * line["contract_discount"])
+                )
+
             list_of_other_line_model.append(LineDiscount(**line))
 
         result_combination = CombinedDiscount(
@@ -100,8 +136,8 @@ async def select_carrier(lines: Carriers):
     "/kt/between",
     summary="Comparison of Family and Sum plan",
     response_description="Comparison of Family and Sum plan",
-    # response_model=ComparisonPlan,
-    # response_model_exclude_unset=True,
+    response_model=ComparisonPlan,
+    response_model_exclude_unset=True,
 )
 async def comparison_plan(lines: Carriers):
     try:
@@ -134,6 +170,22 @@ async def comparison_plan(lines: Carriers):
     sums_base_line["contract_discount"] = 0.25
     sums_base_line["combination_rule"] = fake_combination_rule["sums"]
 
+    if sums_base_line["combination_rule"]["is_flat_discount"]:
+        sums_base_line["mobile_pay"] = (
+            sums_base_line["price"]
+            - (sums_base_line["combination_rule"]["combination_discount"])
+            - (sums_base_line["price"] * sums_base_line["contract_discount"])
+        )
+    else:
+        sums_base_line["mobile_pay"] = (
+            sums_base_line["price"]
+            - (
+                sums_base_line["price"]
+                * sums_base_line["combination_rule"]["combination_discount"]
+            )
+            - (sums_base_line["price"] * sums_base_line["contract_discount"])
+        )
+
     mobile_plan_list = []
 
     mobile_plan_list.append(LineDiscount(**sums_base_line))
@@ -141,6 +193,20 @@ async def comparison_plan(lines: Carriers):
     for i in stored_plan:
         i["contract_discount"] = 0.25
         i["combination_rule"] = fake_combination_rule["sums"]
+
+        if i["combination_rule"]["is_flat_discount"]:
+            i["mobile_pay"] = (
+                i["price"]
+                - (i["combination_rule"]["combination_discount"])
+                - (i["price"] * i["contract_discount"])
+            )
+        else:
+            i["mobile_pay"] = (
+                i["price"]
+                - (i["price"] * i["combination_rule"]["combination_discount"])
+                - (i["price"] * i["contract_discount"])
+            )
+
         mobile_plan_list.append(LineDiscount(**i))
 
     # result_comparison_plans.sum_plan
@@ -181,12 +247,41 @@ async def comparison_plan(lines: Carriers):
 
     base_line["combination_rule"] = base_combination_rule
     base_line["contract_discount"] = 0.25
+
+    if base_line["combination_rule"]["is_flat_discount"]:
+        base_line["mobile_pay"] = (
+            base_line["price"]
+            - (base_line["combination_rule"]["combination_discount"])
+            - (base_line["price"] * base_line["contract_discount"])
+        )
+    else:
+        base_line["mobile_pay"] = (
+            base_line["price"]
+            - (
+                base_line["price"]
+                * base_line["combination_rule"]["combination_discount"]
+            )
+            - (base_line["price"] * base_line["contract_discount"])
+        )
     base_line_model = LineDiscount(**base_line)
 
     list_of_other_line_model = []
     for line in other_line:
         line["combination_rule"] = other_combination_rule
         line["contract_discount"] = 0.25
+        if line["combination_rule"]["is_flat_discount"]:
+            line["mobile_pay"] = (
+                line["price"]
+                - (line["combination_rule"]["combination_discount"])
+                - (line["price"] * line["contract_discount"])
+            )
+        else:
+            line["mobile_pay"] = (
+                line["price"]
+                - (line["price"] * line["combination_rule"]["combination_discount"])
+                - (line["price"] * line["contract_discount"])
+            )
+
         list_of_other_line_model.append(LineDiscount(**line))
 
     family_combination = CombinedDiscount(

@@ -1,7 +1,7 @@
 from typing_extensions import Annotated
 from typing import Union
 
-from .modle_kt import (
+from db.models.modle_kt import (
     PlanKT,
     InternatCombination,
     LineDiscount,

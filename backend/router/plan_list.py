@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Query, HTTPException
 from typing_extensions import Annotated
 from typing import Union
-from ..internal.modle_kt import PlanKT, InternatCombination, Internets
-from ..fake_db.fake_db import fake_plan, fake_internet
+from db.models.modle_kt import PlanKT, InternatCombination, Internets
+from fake_db.fake_db import fake_plan, fake_internet
 
 
 router = APIRouter(

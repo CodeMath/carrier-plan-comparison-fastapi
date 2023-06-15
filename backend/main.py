@@ -1,9 +1,22 @@
 from fastapi import FastAPI, HTTPException, APIRouter
 from enum import Enum
-from .router import combination, plan_list
+from router import combination, plan_list
 from fastapi.middleware.cors import CORSMiddleware
+from db.session import db_engine
+from db.base import Base
 
-app = FastAPI()
+
+def create_table():
+    Base.metadata.create_all(bind=db_engine)
+
+
+def get_application():
+    app = FastAPI()
+    create_table()
+    return app
+
+
+app = get_application()
 
 origins = [
     "http://localhost:8080",

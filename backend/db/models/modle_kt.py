@@ -17,6 +17,7 @@ class InternatCombination(BaseModel):
 class PlanKT(BaseModel):
     price: int = Field(default=0, ge=0)
     title: Union[str, None] = None
+    eng_title: Union[str, None] = None
     url: Union[HttpUrl, None] = None
     carrier: str
 
@@ -25,10 +26,18 @@ class PlanKT(BaseModel):
             "example": {
                 "price": 100000,
                 "title": "스페셜",
+                "eng_title": "special",
                 "url": "kt.com",
                 "carrier": "5G",
             }
         }
+
+
+class PlanKTinDB(PlanKT):
+    id: int
+
+    class Config:
+        orm_mode = True
 
 
 class CombinationRule(BaseModel):
@@ -51,6 +60,7 @@ class CombinationRule(BaseModel):
 class LineDiscount(PlanKT):
     contract_discount: float = Field(default=0.25, ge=0)
     combination_rule: Union[CombinationRule, None] = None
+    mobile_pay: int
 
     class Config:
         schema_extra = {
@@ -66,6 +76,7 @@ class LineDiscount(PlanKT):
                     "is_flat_discount": False,
                     "combination_discount": 0.25,
                 },
+                "mobile_pay": 50000,
             }
         }
 

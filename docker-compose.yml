@@ -1,11 +1,50 @@
-version: 3;
+version: "3.8"
 
 services:
   backend:
-    build: ./api
-    container_name: "carrier"
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: carrier
     ports:
       - 8080:8080
+    depends_on:
+      - db
+    restart: always
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/docs" ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 10s
+
+  db:
+    image: mysql:8.0.29
+    container_name: "mysql_carrier"
+    ports:
+      - 3306:3306
+    expose:
+      - 3306
     volumes:
-      - ./api:/app
-    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8080
+      - ./mysql/conf.d:/app/mysql/conf.d
+      - ./mysql/data:/var/lib/mysql
+    env_file: ./backend/.env
+    environment:
+      TZ: Asia/Seoul
+    restart: always
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysql",
+          "$${MYSQL_DATABASE}",
+          "-h",
+          "localhost",
+          "-uroot",
+          "-p$${MYSQL_ROOT_PASSWORD}",
+          "-e",
+          "\"SHOW DATABASES;\""
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 10

@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
-from app.main import app
-from ..combination import router
+from main import app
+from router.combination import router
 
 client = TestClient(app)
 prefix = router.prefix
