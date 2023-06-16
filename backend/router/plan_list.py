@@ -1,17 +1,23 @@
 from fastapi import APIRouter, Query, HTTPException, Depends
 from typing_extensions import Annotated
 from typing import Union
-from db.models.modle_kt_schemas import PlanKT, InternatCombination, Internets
+from db.models.modle_kt_schemas import (
+    PlanKT,
+    InternatCombination,
+    Internets,
+    PlanKTinDB,
+)
 from fake_db.fake_db import fake_plan, fake_internet
 
 
 router = APIRouter(
     prefix="/plan", tags=["plan"], responses={404: {"description": "404 not found"}}
 )
-
+from starlette import status
+from starlette.config import Config
 
 from sqlalchemy.orm import Session
-from .crud import *
+from router import crud
 from db.models.mobile_plan import *
 from db.session import *
 
@@ -25,16 +31,24 @@ def get_db():
         db.close()
 
 
-@router.post("/mobile", response_model=PlanKTinDB)
-def create_plan(plan: PlanKTinDB, db: Session = Depends(get_db)):
-    """
-    Error 나옴... 수정 필요
-    """
-    db_plan_ko_title = get_plan_by_ko_name(db=db, title=plan.title)
-    print(db_plan_ko_title)
+@router.post("/mobile", response_model=PlanKT)
+async def create_plan(plan: PlanKTinDB, db: Session = Depends(get_db)):
+    """ """
+
+    db_plan_ko_title = crud.get_existing_plan(db, plan=plan)
+
     if db_plan_ko_title:
-        raise HTTPException(status_code=400, detail="Already registered")
-    return create_plan(db=db, plan=plan)
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail="Already registered"
+        )
+    return crud.create_plan(db=db, plan=plan)
+
+
+@router.get(
+    "/all/mobile", summary="All KT carrier plan", response_model=list[PlanKTinDB]
+)
+async def get_list_mobile_items(db: Session = Depends(get_db)):
+    return crud.get_plan_all(db=db)
 
 
 @router.get(

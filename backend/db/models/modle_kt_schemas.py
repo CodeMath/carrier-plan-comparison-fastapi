@@ -16,9 +16,9 @@ class InternatCombination(BaseModel):
 
 class PlanKT(BaseModel):
     price: int = Field(default=0, ge=0)
-    title: Union[str, None] = None
-    eng_title: Union[str, None] = None
-    url: Union[HttpUrl, None] = None
+    title: str
+    eng_title: str
+    url: HttpUrl
     carrier: str
 
     class Config:
