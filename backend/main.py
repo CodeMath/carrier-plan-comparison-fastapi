@@ -2,12 +2,7 @@ from fastapi import FastAPI, HTTPException, APIRouter
 from enum import Enum
 from router import combination, plan_list
 from fastapi.middleware.cors import CORSMiddleware
-from db.session import db_engine
-from db.base import Base
-
-
-def create_table():
-    Base.metadata.create_all(bind=db_engine)
+from entry_point import create_table
 
 
 def get_application():

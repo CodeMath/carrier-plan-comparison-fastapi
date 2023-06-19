@@ -15,15 +15,18 @@ from db.models.modle_kt_schemas import (
 
 from fake_db.fake_db import fake_plan, fake_internet, fake_combination_rule
 
+"""
+##### Deprecated #####
+"""
 
-router = APIRouter(
-    prefix="/combination",
-    tags=["combination"],
-    responses={
-        404: {"description": "404 not found"},
-        403: {"description": "403 Error"},
-    },
-)
+# router = APIRouter(
+#     prefix="/combination",
+#     tags=["combination"],
+#     responses={
+#         404: {"description": "404 not found"},
+#         403: {"description": "403 Error"},
+#     },
+# )
 
 
 @router.post(

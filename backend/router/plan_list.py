@@ -9,10 +9,13 @@ from db.models.modle_kt_schemas import (
 )
 from fake_db.fake_db import fake_plan, fake_internet
 
+"""
+##### deprecated #####
+"""
 
-router = APIRouter(
-    prefix="/plan", tags=["plan"], responses={404: {"description": "404 not found"}}
-)
+# router = APIRouter(
+#     prefix="/plan", tags=["plan"], responses={404: {"description": "404 not found"}}
+# )
 from starlette import status
 from starlette.config import Config
 
