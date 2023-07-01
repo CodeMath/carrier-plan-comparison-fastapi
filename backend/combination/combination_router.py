@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Query, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from typing_extensions import Annotated
 from typing import Union
 
@@ -8,7 +8,9 @@ from internal.calculater_range import pay_range_combination, in_range
 from dependency import get_db  # SessionLocal()
 
 from combination import combination_crud
-from combination.combination_schemas import base_combination_schemas, combination_schemas,
+from combination.combination_schemas import (
+    base_combination_schemas,
+)
 from db.models import model_combination
 
 from sqlalchemy.orm import Session
@@ -28,44 +30,62 @@ router = APIRouter(
 
 
 @router.post(
-    '/create/rule',
-    summary = "create rule",
-    status_cdoe=status.HTTP_204_NO_CONTENT,
+    "/create/rule",
+    summary="create rule",
+    status_code=status.HTTP_204_NO_CONTENT,
+    response_model=None,
 )
-async def create_combination_rule(db: Session, rule: base_combination_schemas.CreateCombinationRule_Schema):
-    existing_rule = combination_crud.get_combination_rule_by_name_lines(carrier_line=rule.carrier_line, name=rule.name)
+async def create_combination_rule(
+    rule: base_combination_schemas.CreateCombinationRule_Schema,
+    db: Session = Depends(get_db),
+):
+    existing_rule = combination_crud.get_combination_rule_by_name_lines(
+        carrier_line=rule.carrier_line, name=rule.name
+    )
     if existing_rule:
         raise HTTPException(status_code=409, detail="Already registered")
     combination_crud.create_combination_rule(db=db, rule=rule)
 
+
 @router.get(
-    '/get/rule',
-    summary = "get rule by id"
+    "/get/rule",
+    summary="get rule by id",
+    response_model=base_combination_schemas.CombinationRule,
 )
-async def get_combination_url_by_id(db: Session, rule_id: int):
+async def get_combination_url_by_id(rule_id: int, db: Session = Depends(get_db)):
     result = combination_crud.get_combination_rule_by_id(db=db, rule_id=rule_id)
     if result:
         return result
     else:
         raise HTTPException(status_code=404, detail="not found")
 
+
 @router.get(
-    '/get/rule',
-    summary = "get rule by id"
+    "/get/rule",
+    summary="get rule by id",
+    response_model=base_combination_schemas.CombinationRule,
 )
-async def  get_combination_rule_by_line_name(db: Session, carrier_line:int, name:str):
-    result = combination_crud.get_combination_rule_by_name_lines(db=db, carrier_line=carrier_line, name=name)
+async def get_combination_rule_by_line_name(
+    carrier_line: int, name: str, db: Session = Depends(get_db)
+):
+    result = combination_crud.get_combination_rule_by_name_lines(
+        db=db, carrier_line=carrier_line, name=name
+    )
     if result:
         return result
     else:
         raise HTTPException(status_code=404, detail="not found")
 
+
 @router.post(
     "/single",
     summary="single combination result",
-    status_cdoe=status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_204_NO_CONTENT,
+    response_model=None,
 )
-async def create_single_combination(db: Session, mobile_id: int, internet_id: int):
+async def create_single_combination(
+    mobile_id: int, internet_id: int, db: Session = Depends(get_db)
+):
     is_single_combination_rule = combination_crud.get_combination_rule_by_name_lines(
         db=db, carrier_line=1, name="싱글결합"
     )
@@ -81,4 +101,3 @@ async def create_single_combination(db: Session, mobile_id: int, internet_id: in
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Already registered"
         )
-

@@ -1,6 +1,10 @@
 from fastapi import FastAPI, HTTPException, APIRouter
 from enum import Enum
-from router import combination, plan_list
+
+# from router import combination, plan_list
+from mobile import mobile_router
+from internet import internet_router
+from combination import combination_router
 from fastapi.middleware.cors import CORSMiddleware
 from entry_point import create_table
 
@@ -26,5 +30,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(plan_list.router)
-app.include_router(combination.router)
+app.include_router(mobile_router.router)
+# app.include_router(internet_router.router)
+# app.include_router(combination_router.router)

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Union
-from schemas.plan_schemas import Mobile
+from mobile.mobile_schemas import Mobile
 
 
 """

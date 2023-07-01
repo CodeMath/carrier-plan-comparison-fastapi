@@ -16,7 +16,6 @@ def create_mobile(db: Session, mobile: mobile_schemas.CreateMobile_Schema):
     print(db_plan)
     db.add(db_plan)
     db.commit()
-    db.refresh()
 
 
 def get_mobile_by_id(db: Session, mobile_id: int):
@@ -25,26 +24,34 @@ def get_mobile_by_id(db: Session, mobile_id: int):
 
 
 def get_mobile_by_title(db: Session, mobile_plan: str):
-    result = db.query(Mobile).filter(Mobile.plan == mobile_plan)
-    return result.scalar_one()
+    result = db.query(Mobile).filter(Mobile.plan == mobile_plan).first()
+    return result
 
 
 def get_mobile_list(
     db: Session, skip: int = 0, limit: int = 0, price: int = 0, carrier: str = ""
 ):
-    query = select(Mobile)
-    if carrier:
-        search = "%%{}%%".format(carrier)
-        query = query.filter((Mobile.plan >= price) | Mobile.carrier.ilike(search))
-    total = db.execute(select(func.count()).slect_from(query))
-    result = db.execute(query.offset(skip).limit(limit).distinct())
+    mobile_list = db.query(Mobile)
 
-    return total.scalr_one(), result.scalars().fetchall()
+    if carrier:
+        search = "%%{}%%".format(carrier.upper())
+        mobile_list = mobile_list.filter(
+            (Mobile.plan >= price) | Mobile.carrier.ilike(search)
+        )
+
+    total = mobile_list.distinct().count()
+    result = mobile_list.offset(skip).limit(limit).distinct().all()
+    return total, result
 
 
 def get_existing_mobile(db: Session, mobile: mobile_schemas.CreateMobile_Schema):
-    result = db.execute(select(Mobile).filter((Mobile.plan == mobile.plan)))
-    return result.scalars().all()
+    result = db.query(Mobile).filter(
+        (mobile.carrier == Mobile.carrier)
+        & (mobile.plan == Mobile.plan)
+        & (mobile.price == Mobile.price)
+        & (mobile.url == Mobile.url)
+    )
+    return result.first()
 
 
 def update_mobile(
@@ -58,10 +65,8 @@ def update_mobile(
     db_mobile.carrier = mobile_update.carrier
     db.add(db_mobile)
     db.commit()
-    db.refresh()
 
 
 def delete_mobile(db: Session, db_mobile: Mobile):
     db.delete(db_mobile)
     db.commit()
-    db.refresh()

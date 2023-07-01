@@ -34,7 +34,7 @@ class CreateMobile_Schema(Mobile):
         orm_mode = True
 
 
-class UpdateMobile_Schema(CreateMobile_Schema):
+class UpdateMobile_Schema(Mobile):
     mobile_id: int
 
 

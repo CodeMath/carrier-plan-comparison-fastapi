@@ -18,32 +18,32 @@ from db.models.model_internet import Internet
 class CombinationRule(Base):
     __tablename__ = "combination_rule"
 
-    id = Column(BIGINT, primary_key=True, autoincrement=True)
-    carrier_line = Column(Integer, nullable=False, default=1)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    carrier_line = Column(Integer, nullable=False)
     name = Column(String(50), nullable=False)
-    is_flat_discount = Column(Boolean(default=False))
-    combination_discount = Column(Float, nullable=False, default=0)
+    is_flat_discount = Column(Boolean, nullable=False)
+    combination_discount = Column(Float, nullable=False)
 
 
 class CombinationSingle(Base):
     __tablename__ = "combiantion_single"
 
-    id = Column(BIGINT, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     create_time = Column(DateTime, nullable=False)
-    base_line_id = Column(Mobile, ForeignKey("Mobile.id", ondelete="CASCADE"))
+    base_line_id = Column(Integer, ForeignKey("mobile.id"))
     base_line = relationship("Mobile")
 
-    internet_id = Column(Internet, ForeignKey("Internet.id", ondelete="CASCADE"))
+    internet_id = Column(Integer, ForeignKey("internet.id"))
     internet = relationship("Internet")
-    sum_payment = Column(Integer, default=0, nullalbe=False)
+    sum_payment = Column(Integer, nullable=False)
 
 
 class SumCombinationRule(Base):
     __tablename__ = "sum_combination_rule"
 
-    id = Column(BIGINT, primary_key=True, autoincrement=True)
-    st_range = Column(Integer, default=0, nullable=False)
-    ed_range = Column(Integer, default=0, nullable=False)
-    mobile_discount = Column(Integer, default=0, nullable=False)
-    is_internet_slim = Column(Boolean(default=False))
-    internet_discount = Column(Integer, default=0, nullable=False)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    st_range = Column(Integer, nullable=False)
+    ed_range = Column(Integer, nullable=False)
+    mobile_discount = Column(Integer, nullable=False)
+    is_internet_slim = Column(Boolean, nullable=False)
+    internet_discount = Column(Integer, nullable=False)

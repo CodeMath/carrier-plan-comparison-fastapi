@@ -22,6 +22,8 @@ router = APIRouter(
 
 @router.post(
     "/create/internet",
+    status_code=status.HTTP_201_CREATED,
+    response_model=internet_schemas.Internet,
 )
 async def create_internet(
     internet: internet_schemas.CreateInternet_Schema, db: Session = Depends(get_db)
@@ -78,13 +80,15 @@ async def internet_items_list(
     return {"total": total, "internet_list": _internet_list}
 
 
-@router.update(
+@router.put(
     "/update/internet",
     summary="update internet",
-    status_cdoe=status.HTTP_204_NO_CONTENT,
+    status_code=status.HTTP_204_NO_CONTENT,
+    response_model=None,
 )
 async def internet_update(
-    db: Session, _internet_update=internet_schemas.UpdateInternet_Schema
+    _internet_update=internet_schemas.UpdateInternet_Schema,
+    db: Session = Depends(get_db),
 ):
     db_internet = internet_crud.get_internet_by_id(
         db=db, internet_id=_internet_update.internet_id
@@ -99,9 +103,12 @@ async def internet_update(
     )
 
 
-@router.delete("/delete/internet", status_code=status.HTTP_204_NO_CONTENT)
+@router.post(
+    "/delete/internet", status_code=status.HTTP_204_NO_CONTENT, response_model=None
+)
 async def internet_delete(
-    db: Session, _internet_delete: internet_schemas.DeleteInternet_Schema
+    _internet_delete: internet_schemas.DeleteInternet_Schema,
+    db: Session = Depends(get_db),
 ):
     db_internet = internet_crud.get_internet_by_id(
         db=db, internet_id=_internet_delete.internet_id

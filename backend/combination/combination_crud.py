@@ -1,6 +1,9 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import select
-from combination_schemas import base_combination_schemas, combination_schemas
+from combination.combination_schemas import (
+    base_combination_schemas,
+    product_combination_schemas,
+)
 from mobile.mobile_schemas import CreateMobile_Schema
 
 from db.models.model_mobile import Mobile
@@ -116,7 +119,9 @@ def create_combination_single(
 
 # 가족 결합 시, 수정필요.
 def create_combination_family(
-    db: Session, rule_id: int, family_plan: combination_schemas.CreateCombination_Schema
+    db: Session,
+    rule_id: int,
+    family_plan: product_combination_schemas.CreateCombination_Schema,
 ):
     get_rule_db = get_combination_rule_by_id(db=db, rule_id=rule_id)
 
